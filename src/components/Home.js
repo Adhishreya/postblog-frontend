@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Alert, ListGroup } from 'react-bootstrap';
 import styled from 'styled-components';
 import { fetchPosts } from '../services/postService';
+import { Link } from 'react-router-dom';
 
 const Avatar = styled.img`
 cursor: pointer;
@@ -74,50 +75,41 @@ const Home = () => {
                 }
                 {posts &&
                     posts.map((post, index) =>
-                        <ListGroupItem className="list-group-item mt-3 w-75 mx-auto" onClick={() => { }}>
-                            <div className="d-flex w-full ">
-                                <div>
-                                    <img className='w-25' src={post.user.image} alt={`${post.user.image} photo`} />
-                                    <small>{post.user.username}</small>
-                                    <div className="fw-bold">{post.postHeader}</div>
-                                    <div className='text-start'>{post.postBody}</div>
-                                    ~<small >{post.postedAtAt}</small>
-                                    <div className="d-flex w-100">
-                                        <i className="bi bi-heart mx-2"></i>
-                                        <div>{post.likes}</div>
-                                        <a href={`http://localhost:8080/commentList/${post.id}`}><i
-                                            class="bi bi-menu-up mx-2"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </ListGroupItem>
+                        <Link to="/post" style={{ textDecoration: "none", color: "black" }}> <ListCard onClick={() => { }} src="" alt="" topic="topic" username="username" postedAt="postedAt" header="postHeader" body="body" /></Link>
                     )
                 }
+                <Link to="/post" style={{ textDecoration: "none", color: "black" }}>
+                    <ListCard src="" alt="" topic="topic" username="username" postedAt="postedAt" header="postHeader" body="body" saved={false} />
 
-                <ListCard />
-
-
+                </Link>
             </ListGroup>
         </div>
     )
 }
 
-const ListCard = () => {
+export const ListCard = ({ src,
+    alt,
+    username,
+    postedAt,
+    header,
+    topic,
+    body,
+    saved }) => {
     return (
         <CustomListGroupItem className="mt-3 w-100 mx-auto" onClick={() => { }}>
             <div className=" w-full ">
                 <Header>
-                    <Avatar src="" alt="" />
-                    <small>username</small>
-                    <small >postedAtAt</small>
+                    <Avatar src={src} alt={alt} />
+                    <small>{username}</small>
+                    <small >{postedAt}</small>
                 </Header>
                 <PostBody>
                     <PostDetails>
-                        <PostName className="fw-bold">postHeader</PostName>
-                        <div className='text-start'>post.postBody</div>
+                        <PostName className="fw-bold">{header}</PostName>
+                        <div className='text-start'>{body}</div>
                         <PostFooter>
-                            <Topic>Topic</Topic>
-                            <a><i class="bi bi-bookmark-plus"></i></a>
+                            <Topic>{topic}</Topic>
+                            {saved ? <a><i class="bi bi-bookmark-fill"></i></a> : <a><i class="bi bi-bookmark-plus"></i></a>}
                         </PostFooter>
                     </PostDetails>
                     <PostImage />

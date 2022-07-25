@@ -62,7 +62,8 @@ const OutLinedButton = styled.button`
 padding: 0.5rem 1rem;
 border-radius: 1.5rem;
 height: fit-content;
-border:2px solid #0f172a;
+border:2px solid #16a34a;
+color:#16a34a;
 cursor:pointer;
 ;
 `
@@ -129,8 +130,7 @@ const SideNavigator = () => {
   }, [])
 
   useEffect(() => {
-    // console.log(topics)
-    topics.map(topic => console.log(topic))
+    // topics.map(topic => console.log(topic))
   })
 
   return (
