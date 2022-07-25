@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components';
 
 const Container = styled.div`
@@ -65,14 +65,22 @@ cursor:pointer;
 
 const WritePost = () => {
 
-    const [image,setImage] = useState('');
-
+    const [image, setImage] = useState('');
     const removeRef = useRef();
     const inputRef = useRef();
-    const [current,setCurrent] = ('');
+    const [current, setCurrent] = ('');
     const [count, setCount] = useState(0);
     const [inputType, setInputType] = useState('text');
     const [visible, setVisible] = useState(false);
+    const [types, setTypes] = useState([]);
+
+    useEffect(() => {
+        console.log(count)
+        // const typ = types.splice(types.indexOf(count), 1, 'file');
+        // types.push('file')
+        // console.log(types)
+        // setTypes(types);
+    }, [count])
 
     return (
         <Container>
@@ -85,7 +93,6 @@ const WritePost = () => {
                 <Input placeholder='Title' name='title' style={{ fontSize: "4rem" }} />
                 <NewInputItem>
                     <Button onClick={c => {
-                        setCount(prevValue => prevValue + 1);
                         setVisible(true);
                     }}>
                         <i class="bi bi-plus-circle"></i>
@@ -93,22 +100,21 @@ const WritePost = () => {
                     <Input placeholder='Write your story' style={{ fontSize: "2rem" }} />
                 </NewInputItem>
                 {
-                    Array.from({ length: count }).map((tally,index) =>
-                        <NewInputItem key={index}>
-                            <Button id={index + 1} ref={removeRef} onClick={c => {
-                                setCount(prevValue => prevValue + 1);
-                                setVisible(true);
-                            }}>
-                                <i class="bi bi-plus-circle"></i>
-                            </Button>
-                            <Input id={index+1} ref={inputRef} type={inputType} placeholder='Write your story' onChange={(e)=>{
-
-                                // console.log(e.target.value);
-                                setImage(e.target.value);
-                                setCurrent(removeRef.current);
-                                
-                            }} style={{ fontSize: "2rem" }} />
-                        </NewInputItem>)
+                    Array.from({ length: count }).map((tally, index) => {
+                        return (
+                            <NewInputItem key={index}>
+                                <Button id={index + 1} ref={removeRef} onClick={c => {
+                                    // setCount(prevValue => prevValue + 1);
+                                    setVisible(true);
+                                }}>
+                                    <i class="bi bi-plus-circle"></i>
+                                </Button>
+                                <Input id={index + 1} ref={inputRef} type={types[index]} placeholder='Write your story' onChange={(e) => {
+                                    setImage(e.target.value);
+                                }} style={{ fontSize: "2rem" }} />
+                            </NewInputItem>)
+                    }
+                    )
                 }
                 {visible &&
                     <EditOptions>
@@ -116,18 +122,28 @@ const WritePost = () => {
                         <i onClick={() => {
                             setVisible(false);
                             setInputType('file');
-                            // inputRef
-                            console.log(current)
+                            setCount(prevValue => prevValue + 1);
+                            setTypes([...types,'file']);
+                            // console.log(typ);
+                            // inputRef.current.type = inputType;
                         }} class="bi bi-camera"></i>
                         <i onClick={() => setVisible(false)} class="bi bi-code"></i>
                         <i onClick={() => setVisible(false)} class="bi bi-search"></i>
-                        <i onClick={() =>{ 
+                        <i onClick={() => {
                             setVisible(false);
                             setInputType('text');
-                            }} class="bi bi-fonts"></i>
+                            setCount(prevValue => prevValue + 1);
+                            // const typ = types.splice(types.indexOf(count), 1, 'text');
+                            setTypes([...types,'text']);
+                            // console.log(typ);
+                            // console.log(count);
+                            // console.log(parseInt(inputRef.current.id)===parseInt(count));
+                            // inputRef.current.type = inputType;
+                            // console.log(inputRef.current.type)
+                        }} class="bi bi-fonts"></i>
                     </EditOptions>}
 
-                    <img scr= {image}/>
+                <img scr={image} />
             </Wrapper>
 
         </Container>

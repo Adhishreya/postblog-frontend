@@ -38,6 +38,7 @@ gap:2rem;
 border-radius: 1.5rem;
 background: #cbd5e1;
 text-align: center;
+cursor: pointer;
 `;
 
 const Image = styled.img`
@@ -73,6 +74,7 @@ display:flex;
 align-items: center;
 width: 100%;
 justify-content: space-between;
+cursor: pointer;
 `;
 
 const Avatar = styled.img`
@@ -107,6 +109,7 @@ margin-top: 1rem;
  /* border rounded mb-3 flex-row */
  width: 100%;
  gap:1rem;
+ cursor: pointer;
  /* justify-content: center; */
  align-items: center;
 `;
