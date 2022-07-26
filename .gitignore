@@ -24,3 +24,5 @@ yarn-error.log*
 package-lock.json
 package-lock.json
 instructions.md
+package-lock.json
+src/confg.js

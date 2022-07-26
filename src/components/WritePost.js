@@ -21,6 +21,7 @@ outline:none;
 
 const Button = styled.div`
 font-size: 2rem;
+cursor: pointer;
 `;
 const NewInputItem = styled.div`
 display: flex;
@@ -63,24 +64,26 @@ color: aliceblue;
 cursor:pointer;
 `;
 
+const InputComponent = styled.div`
+display: flex;
+padding: 0.5rem;
+border:2px solid #9ca3af;
+align-items: center;
+width: 80%;
+gap:2rem;
+border-radius: 0.5rem;
+`;
+
 const WritePost = () => {
 
     const [image, setImage] = useState('');
     const removeRef = useRef();
     const inputRef = useRef();
-    const [current, setCurrent] = ('');
     const [count, setCount] = useState(0);
-    const [inputType, setInputType] = useState('text');
     const [visible, setVisible] = useState(false);
     const [types, setTypes] = useState([]);
 
-    useEffect(() => {
-        console.log(count)
-        // const typ = types.splice(types.indexOf(count), 1, 'file');
-        // types.push('file')
-        // console.log(types)
-        // setTypes(types);
-    }, [count])
+    const [embedUrl,setEmbedUrl] = useState('');
 
     return (
         <Container>
@@ -100,20 +103,54 @@ const WritePost = () => {
                     <Input placeholder='Write your story' style={{ fontSize: "2rem" }} />
                 </NewInputItem>
                 {
-                    Array.from({ length: count }).map((tally, index) => {
-                        return (
-                            <NewInputItem key={index}>
+                    Array.from({ length: count }).map((tally, index) =>
+                        <NewInputItem key={index}>
+                            {(index + 1) < count
+                                ?
+
                                 <Button id={index + 1} ref={removeRef} onClick={c => {
-                                    // setCount(prevValue => prevValue + 1);
+                                    types.splice(index, 1);
+                                    setTypes(types);
+                                    setCount(prevValue => prevValue - 1);
+                                }}> <i class="bi bi-dash-circle"></i>
+                                </Button>
+                                :
+                                <Button id={index + 1} ref={removeRef} onClick={c => {
                                     setVisible(true);
                                 }}>
                                     <i class="bi bi-plus-circle"></i>
                                 </Button>
-                                <Input id={index + 1} ref={inputRef} type={types[index]} placeholder='Write your story' onChange={(e) => {
-                                    setImage(e.target.value);
-                                }} style={{ fontSize: "2rem" }} />
-                            </NewInputItem>)
-                    }
+                            }
+
+                            {
+                                types[index] === 'text' &&
+                                <Input id={index + 1} ref={inputRef} type={types[index]} placeholder='Write your story'
+                                    style={{ fontSize: "2rem" }}
+                                />
+                            }
+                            {
+                                types[index] === 'file' &&
+                                <Input id={index + 1} ref={inputRef} type={types[index]} accept="image/*"
+                                    style={{ fontSize: "2rem" }}
+                                />
+                            }
+                            {
+                            types[index] === 'search' && 
+                            <InputComponent>
+                                <i class="bi bi-search"></i>
+                                <Input placeholder='Paste external image url' />
+                            </InputComponent>
+                            }
+                            {
+                            types[index] === 'embed' && 
+                            <>
+                                <Input placeholder='Paste source url to embed' onChange={e=>setEmbedUrl(e.target.value)}/>
+                                {embedUrl.length>0 && <iframe src={embedUrl} width="100%" height="300" style={{border:"1px solid black"}}>
+</iframe>}
+                            </>
+                            }
+
+                        </NewInputItem>
                     )
                 }
                 {visible &&
@@ -121,31 +158,33 @@ const WritePost = () => {
                         <i onClick={() => setVisible(false)} class="bi bi-x-circle"></i>
                         <i onClick={() => {
                             setVisible(false);
-                            setInputType('file');
                             setCount(prevValue => prevValue + 1);
-                            setTypes([...types,'file']);
-                            // console.log(typ);
-                            // inputRef.current.type = inputType;
+                            setTypes([...types, 'file']);
                         }} class="bi bi-camera"></i>
-                        <i onClick={() => setVisible(false)} class="bi bi-code"></i>
-                        <i onClick={() => setVisible(false)} class="bi bi-search"></i>
                         <i onClick={() => {
                             setVisible(false);
-                            setInputType('text');
                             setCount(prevValue => prevValue + 1);
-                            // const typ = types.splice(types.indexOf(count), 1, 'text');
-                            setTypes([...types,'text']);
-                            // console.log(typ);
-                            // console.log(count);
-                            // console.log(parseInt(inputRef.current.id)===parseInt(count));
-                            // inputRef.current.type = inputType;
-                            // console.log(inputRef.current.type)
+                            setTypes([...types, 'embed']);
+                        }} class="bi bi-code"></i>
+                        <i onClick={() => {
+                            setVisible(false);
+                            setCount(prevValue => prevValue + 1);
+                            setTypes([...types, 'search']);
+                        }} class="bi bi-search"></i>
+                        <i onClick={() => {
+                            setVisible(false);
+                            setCount(prevValue => prevValue + 1);
+                            setTypes([...types, 'text']);
                         }} class="bi bi-fonts"></i>
                     </EditOptions>}
 
-                <img scr={image} />
-            </Wrapper>
+                {/* <iframe id="myIframe" src="https://medium.com/bitsrc/stop-using-function-parameters-now-d320cf0932df"></iframe>
 
+                <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", maxWidth: "100%" }}>
+                    <iframe style={{ border: "none", position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }} src='' ></iframe>
+                </div> */}
+
+            </Wrapper>
         </Container>
     )
 }
