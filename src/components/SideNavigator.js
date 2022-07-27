@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { fetchMostLikedPosts, fetchMostRecentPosts } from '../services/postService';
+import {Link} from 'react-router-dom';
 
 const Wrapper = styled.div`
 height: fit-content;
@@ -105,12 +106,9 @@ color: #a1a1aa;
 const Post  = styled.div`
 display:flex;
 margin-top: 1rem;
- /* text-start  */
- /* border rounded mb-3 flex-row */
  width: 100%;
  gap:1rem;
  cursor: pointer;
- /* justify-content: center; */
  align-items: center;
 `;
 
@@ -129,7 +127,7 @@ const SideNavigator = () => {
 
   useEffect(() => {
     // fetchMostLikedPosts().then(res => setPopularPosts(res));
-    // fetchMostRecentPosts().then(res => setRecentPosts(res));
+    fetchMostRecentPosts().then(res => setRecentPosts(res));
   }, [])
 
   useEffect(() => {
@@ -152,17 +150,19 @@ const SideNavigator = () => {
       </div> */}
       <div className='my-3 recent posts fw-bolder text-start fs-6'>What We're Reading Today</div>
       <div className='mb-4 justify-content-start'>
-        {/* {recentPosts.map((post, index) =>
-          <PostCard key={index} postHeader={post.postHeader} user={post.user} />
-        )} */}
-        <PostCard postHeader="postHeader" user="Demo"/>
-        <PostCard postHeader="postHeader" user="Demo"/>
+        {recentPosts ? recentPosts.map((post, index) =>
+          <PostCard key={post.id} postHeader={post.postHeader} user={post.user.username} />
+          
+        )
+        :
+        <PostCard postHeader=" " user=" " />
+      }
       </div>
       <div className="my-3 popular users fw-bolder text-start fs-6">Recommended Topics</div>
       <TopicsList>{topics.map(topic => <Topic>{topic}</Topic>)}</TopicsList>
       <div className="popular users fw-bolder text-start fs-6 my-3">Who to folow</div>
-      <FollowCards username="Demo" designation="Author" bio="Creating the next" src="" />
-      <FollowCards username="Demo" designation="Author" bio="Creating the next" src="" />
+      <Link style={{color:"black" ,textDecoration:"none"}} to={`/@Demo1/home`}><FollowCards username="Demo1" designation="Author" bio="Creating the next" src="" /></Link>
+      <Link style={{color:"black" ,textDecoration:"none"}} to={`/@Demo2/home`}><FollowCards username="Demo2" designation="Author" bio="Creating the next" src="" /></Link>
     </Wrapper>
   )
 }
@@ -174,9 +174,9 @@ const PostCard = ({postHeader,
     <>
       <Post>
         <Image/>
-        <UserName>{user}</UserName>
+        <UserName>{user?user:" "}</UserName>
       </Post>
-      <PostName className='fw-bold '>{postHeader}</PostName>
+      <PostName className='fw-bold '>{postHeader?postHeader :" "}</PostName>
     </>)
 }
 

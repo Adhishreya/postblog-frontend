@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import { Routes, Route, Link, Navigate,useSearchParams } from 'react-router-dom';
 import { Authenticate, Home, Login, Register, SideNavigator } from './components';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -9,6 +9,7 @@ import SavedPost from './components/SavedPost';
 import Stories from './components/Stories';
 import { useState } from 'react';
 import WritePost from './components/WritePost';
+import UserPosts from './components/UserPosts';
 
 const Image = styled.img`
 cursor: pointer;
@@ -39,11 +40,17 @@ const Wrapper = styled.div`
 height: 100%;
 `;
 
+const Container = styled.div`
+height: 100%;
+overflow-y: ${(props)=>props.overflow && "hidden"};
+`
 
 const App = () => {
 
+  const [overflow,setOverflow] = useState(true);
+
   return (
-    <div className="App h-100">
+    <Container className="App" overflow={overflow}>
       <Wrapper className="d-flex m-2">
         <SideBar
           className="d-flex flex-column w-2 justify-content-evenly">
@@ -63,9 +70,10 @@ const App = () => {
             <Route path='/' element={<Home />}>
             </Route>
             <Route path='/home' element={<Home />} />
-            <Route path='/post' element={<Post />} />
+            <Route path='/post/*' element={<Post setOverflow={setOverflow}/>} />
             <Route path='/me/lists' element={<SavedPost />} />
             <Route path='/me/stories/*' element={<Stories />} />
+            <Route path='/@:username/*' element={<UserPosts />} />
             <Route path='/p/97ac9feca675/edit' element={<WritePost/>}/>
             <Route path='/authenticate' element={<Authenticate />}>
               <Route path="login" element={<Login />} />
@@ -74,10 +82,11 @@ const App = () => {
           </Routes>
         </div>
         <div>
-          <SideNavigator />
+          
+          <SideNavigator/>
         </div>
       </Wrapper>
-    </div>
+    </Container>
   );
 }
 

@@ -4,10 +4,19 @@ const url = "http://localhost:8080"
 
 export const fetchPosts = () => {
     return new Promise((resolve, reject) => {
-        axios.get(`${url}/home`).then(res => {
+        axios.get(`${url}/posts/`).then(res => {
             resolve(res.data);
         }).catch(e=>console.log(e))
     })
+}
+
+export const fetchById = (id) =>{
+    return new Promise((resolve, reject) => {
+        axios.get(`${url}/posts/${id}`).then(res => {
+            console.log(res.data)
+            resolve(res.data);
+        }).catch(e=>console.log(e))
+    });
 }
 
 export const fetchMostLikedPosts = () => {

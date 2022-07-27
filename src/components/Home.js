@@ -22,10 +22,11 @@ const PostBody = styled.div`
 display:flex;
 width: 100%;
 margin: 1rem 0rem;
+text-align: start;
 justify-content: space-between;
 `;
 const PostDetails = styled.div` 
-
+width: 60%;
 `;
 const PostFooter = styled.div`
 display:flex;
@@ -58,11 +59,10 @@ text-align: center;
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
-    const fetchProducts = () => {
-        fetchPosts().then(res => setPosts(res));
-    }
-
     useEffect(() => {
+        const fetchProducts = () => {
+            fetchPosts().then(res => setPosts(res));
+        }
         fetchProducts();
     }, [])
     return (
@@ -73,15 +73,17 @@ const Home = () => {
                         No posts available</Alert>
 
                 }
-                {posts &&
+                {posts && posts!==null && posts.length>0?
                     posts.map((post, index) =>
-                        <Link to="/post" style={{ textDecoration: "none", color: "black" }}> <ListCard onClick={() => { }} src="" alt="" topic="topic" username="username" postedAt="postedAt" header="postHeader" body="body" /></Link>
+                        <Link to={`/post/?id=${post.id}`} style={{ textDecoration: "none", color: "black" }}>
+                            <ListCard onClick={() => { }} src="" alt="" topic="topic" username={post.user.username} postedAt={post.postedAt} header={post.postHeader} body={post.postBody} />
+                        </Link>
                     )
+                    :
+                    <Link to={`/post/?id=""`} style={{ textDecoration: "none", color: "black" }}>
+                        <ListCard onClick={() => { }} src="" alt="" topic=" " username="username" postedAt="" header="" body="" />
+                    </Link>
                 }
-                <Link to="/post" style={{ textDecoration: "none", color: "black" }}>
-                    <ListCard src="" alt="" topic="topic" username="username" postedAt="postedAt" header="postHeader" body="body" saved={false} />
-
-                </Link>
             </ListGroup>
         </div>
     )
@@ -100,15 +102,15 @@ export const ListCard = ({ src,
             <div className=" w-full ">
                 <Header>
                     <Avatar src={src} alt={alt} />
-                    <small>{username}</small>
+                    <Link style={{color:"black" ,textDecoration:"none"}} to={`/@${username}/home`}><small>{username}</small></Link>
                     <small >{postedAt}</small>
                 </Header>
                 <PostBody>
                     <PostDetails>
-                        <PostName className="fw-bold">{header}</PostName>
+                        <PostName className="fw-bold ">{header}</PostName>
                         <div className='text-start'>{body}</div>
                         <PostFooter>
-                            <Topic>{topic}</Topic>
+                            <Topic>{topic?topic:"  "}</Topic>
                             {saved ? <a><i class="bi bi-bookmark-fill"></i></a> : <a><i class="bi bi-bookmark-plus"></i></a>}
                         </PostFooter>
                     </PostDetails>
