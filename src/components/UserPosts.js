@@ -111,7 +111,7 @@ const UserPosts = () => {
 
 const Home = () =>{
     return(
-<Link to={`/post/?id=`} style={{ textDecoration: "none", color: "black" }}>
+<Link to={`/post/{post.postHeader}@{post.id}`} style={{ textDecoration: "none", color: "black" }}>
                     <ListCard onClick={() => { }} src="" alt="" topic="topic" username='post.user.username' postedAt="post.postedAt" header="post.postHeader" body="post.postBody" />
                 </Link>
     )

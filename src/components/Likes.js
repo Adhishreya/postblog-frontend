@@ -56,7 +56,7 @@ flex-direction: column;
 const Likes = ({ setLikesVisible, header }) => {
 
     const [likedBy, setLikedBy] = useState();
-    const [count, setCount] = useState();
+    const [count, setCount] = useState(0);
 
     useEffect(() => {
 

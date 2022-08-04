@@ -25,16 +25,13 @@ const TextArea = styled.textarea`
 width: 100%;
 border:none;
 outline:none;
-height:auto;
 resize: vertical;
 height: fit-content;
 `;
 
-const Button = styled.button`
+const Button = styled.div`
 font-size: 2rem;
 cursor: pointer;
-border:none;
-background-color: transparent;
 `;
 const NewInputItem = styled.div`
 display: flex;
@@ -70,7 +67,6 @@ top: 0;
 const Publish = styled.button`
 padding: 0.5rem 1rem;
 border-radius: 1.5rem;
-width:fit-content;
 height: fit-content;
 border:2px solid #16a34a;
 background-color:#16a34a;
@@ -89,6 +85,8 @@ border-radius: 0.5rem;
 `;
 
 const Close = styled.div`
+/* margin-left:auto ;
+margin-left: auto; */
 `;
 
 const TagCard = styled.div`
@@ -98,7 +96,7 @@ align-items: center;
 
 const TagInput = styled(Input)`
 border-bottom:1px solid black;
-width:2.5rem;
+/* width:2rem; */
 `;
 
 const TagEditOptions = styled(EditOptions)`
@@ -107,127 +105,92 @@ flex-wrap: wrap;
 margin:0rem 0rem;
 `;
 
-const StartButton = styled(Button)`
-margin:0rem 0rem;
-width:fit-content;
-color:#9ca3af;
-`;
-
-const PostName = styled.h3`
-width: fit-content;
-margin-bottom: 0.5rem;
-font-weight: 700;
-font-size: 2rem;
-margin: 1rem 0rem;
-`;
-
-// const PostImage = styled.img`
-//  width:90%;
-//  height:35rem;
-//  margin:0rem auto ;
-//  background:#cbd5e1;
-//  `;
-
-const Body = styled.div` 
-
-margin: 1rem 0rem;
-text-align: start;
-
-`;
-
-const TopicsList = styled.div`
-display: flex;
-flex-wrap: wrap;
-gap:2rem;
-`;
-const Topic = styled.div`
-padding: 0.5rem;
-border:2px solid #9ca3af;
-gap:2rem;
-border-radius: 1.5rem;
-background: #cbd5e1;
-text-align: center;
-cursor: pointer;
-`;
 
 const WritePost = () => {
-    const [preview, setPreview] = useState(false);
+
+    const [image, setImage] = useState('');
     const removeRef = useRef();
     const inputRef = useRef();
     const [count, setCount] = useState(0);
     const [tagCount, setTagCount] = useState(0);
     const [visible, setVisible] = useState(false);
+    const [types, setTypes] = useState(['text']);
     const [title, setTitle] = useState('');
     const [tags, setTags] = useState([]);
-    const [postBody, setPostBody] = useState([]);
+
     const [embedUrl, setEmbedUrl] = useState('');
 
+    const [values, setValues] = useState([]);
+
     const areaRef = useRef();
-    const tagsRef = useRef();
 
     const modifyInputArray = (e, index) => {
-        if (index > postBody.length)
-            setPostBody([...postBody, { type: postBody[index].type, value: e }])
+        if (index > values.length)
+            setValues([...values, e])
         else {
-            let tempValues = postBody;
-            tempValues.splice(index, 1, { type: postBody[index].type, value: e });
-            setPostBody(tempValues);
+            let tempValues = values;
+            tempValues.splice(index, 1, e);
+            setValues(tempValues);
         }
+        console.log(areaRef.current)
+
     }
 
-    const handleTags = (value, index) => {
-        if (tagCount === index) {
+
+    const handleTags = (value,index) =>{
+        if (tagCount == index  ) {
             tags.push(value);
         } else {
             let tempTag = tags;
             tags.splice(index, 1, value);
             setTags(tempTag);
         }
+        console.log(count+ " , "+index +"  "+tags)
     }
 
     const publishStory = () => {
 
-        // let postDetail = values.map((value, index) => {
-        //     return { value: value, type: types[index] }
-        // });
-        // setPostBody(postBody);;
+        let postBody = values.map((value, index) => {
+            return { value: value, type: types[index] }
+        });
         let postDetails = JSON.stringify(postBody);
-        // console.log(postDetails);
-        // console.log(JSON.parse(postDetails))
-        savePost(title, postDetails, tags)
+        savePost(title, postDetails)
 
     }
 
 
-    // useEffect(()=>{
-    //     areaRef.current.style.height = "10px"
-    //     // areaRef.current.style.scrollHeight + "px";
-    //     // this.scrollHeight + "px
-    // },[postBody]);
 
     return (
         <Container>
-            {!preview ? <Publish onClick={() => setPreview(true)}>Preview</Publish> : <Button onClick={() => setPreview(false)}>Close button</Button>}
             <Headers>
                 <Publish onClick={() => publishStory()}>Publish</Publish>
                 <Avatar />
             </Headers>
-            {!preview ? <Wrapper>
+
+            <Wrapper>
+
                 <TagEditOptions>
-                    {tagCount === 0 && <StartButton onClick={() => { setTagCount(prevValue => prevValue + 1) }}>
-                        Add Tags
-                    </StartButton>}
+                    {/* <TagCard>
+                        <TagInput onChange={e => {
+                            if (tags.length === 0) {
+                                tags.push(e.target.value);
+                            } else {
+                                let tempTag = tags;
+                                tags.splice(0, 1, e.target.value);
+                                setTags(tempTag);
+                            }
+                        }} />
+                        <Close 
+                            className='displa-6 text-center fs-1 fw-bold'><i class="bi bi-x"></i></Close> */}
+                    {tagCount ===0 &&    <Button onClick={() => { setTagCount(prevValue => prevValue + 1) }}>
+                            Add Tags
+                        </Button>}
+                    {/* </TagCard> */}
                     {
-                        Array.from({ length: tagCount }).map((tag, index) =>
+                        Array.from({ length: tagCount }).map((tag,index) =>
 
                             <TagCard>
-                                <TagInput defaultValue={tags[index] ? tags[index] : ''} ref={tagsRef} style={{width:""}} onChange={e => {
-                                    handleTags(e.target.value, index);
-                                    console.log(tagsRef.current.style.width);
-                                    tagsRef.current.style.width = parseInt(tagsRef.current.style.width+1)+"em";
-                                }
-                                }
-                                />
+                                <TagInput onChange={e => handleTags(e.target.value,index)} />
                                 <Close onClick={() => { setTagCount(prevValue => prevValue - 1) }}
                                     className='displa-6 text-center fs-1 fw-bold'><i class="bi bi-x"></i></Close>
                                 <Button onClick={() => { setTagCount(prevValue => prevValue + 1) }}>
@@ -238,12 +201,15 @@ const WritePost = () => {
                         )
                     }
                 </TagEditOptions>
-                <Input placeholder='Title' value={title ? title : ""} name='title' style={{ fontSize: "4rem" }} onChange={e => setTitle(e.target.value)} />
-                {postBody.length === 0 && <StartButton onClick={c => {
-                    setVisible(true);
-                }}>
-                    Write Your story Here
-                </StartButton>}
+                <Input placeholder='Title' name='title' style={{ fontSize: "4rem" }} onChange={e => setTitle(e.target.value)} />
+                <NewInputItem>
+                    <Button onClick={c => {
+                        setVisible(true);
+                    }}>
+                        <i class="bi bi-plus-circle"></i>
+                    </Button>
+                    <Input placeholder='Write your story' style={{ fontSize: "2rem" }} onChange={e => modifyInputArray(e.target.value, 0)} />
+                </NewInputItem>
                 {
                     Array.from({ length: count }).map((tally, index) =>
                         <NewInputItem key={index}>
@@ -251,8 +217,8 @@ const WritePost = () => {
                                 ?
 
                                 <Button id={index + 1} ref={removeRef} onClick={c => {
-                                    postBody.splice(index, 1);
-                                    setPostBody(postBody);
+                                    types.splice(index, 1);
+                                    setTypes(types);
                                     setCount(prevValue => prevValue - 1);
                                 }}> <i class="bi bi-dash-circle"></i>
                                 </Button>
@@ -265,30 +231,26 @@ const WritePost = () => {
                             }
 
                             {
-                                postBody[index].type === 'text' &&
-                                <TextArea id={`area-text-${index}`} defaultValue={postBody[index].value ? postBody[index].value : ""}
-                                    key={index + 1}
-                                    type={postBody[index].type}
-                                    placeholder='Write your story'
-                                    onChange={e => modifyInputArray(e.target.value, index)}
+                                types[index] === 'text' &&
+                                <TextArea id={`area-text-${index}`} key={index + 1} type={types[index]} placeholder='Write your story' onChange={e => modifyInputArray(e.target.value, index + 1)}
                                     style={{ fontSize: "2rem" }} ref={areaRef}
                                 />
                             }
                             {
-                                postBody[index].type === 'file' &&
-                                <Input id={index + 1} ref={inputRef} type={postBody[index].type} accept="image/*"
+                                types[index] === 'file' &&
+                                <Input id={index + 1} ref={inputRef} type={types[index]} accept="image/*"
                                     style={{ fontSize: "2rem" }}
                                 />
                             }
                             {
-                                postBody[index].type === 'search' &&
+                                types[index] === 'search' &&
                                 <InputComponent>
                                     <i class="bi bi-search"></i>
-                                    <Input defaultValue={postBody[index].value ? postBody[index].value : ""} placeholder='Paste external image url' onChange={e => modifyInputArray(e.target.value, index)} />
+                                    <Input placeholder='Paste external image url' onChange={e => modifyInputArray(e.target.value, index + 1)} />
                                 </InputComponent>
                             }
                             {
-                                postBody[index].type === 'embed' &&
+                                types[index] === 'embed' &&
                                 <>
                                     <Input placeholder='Paste source url to embed' onChange={e => setEmbedUrl(e.target.value)} />
                                     {embedUrl.length > 0 && <iframe src={embedUrl} width="100%" height="300" style={{ border: "1px solid black" }}>
@@ -305,58 +267,34 @@ const WritePost = () => {
                         <i onClick={() => {
                             setVisible(false);
                             setCount(prevValue => prevValue + 1);
-                            setPostBody([...postBody, { type: 'file', value: '' }]);
+                            setTypes([...types, 'file']);
                         }} class="bi bi-camera"></i>
                         <i onClick={() => {
                             setVisible(false);
                             setCount(prevValue => prevValue + 1);
-                            setPostBody([...postBody, { type: 'embed', value: '' }]);
+                            setTypes([...types, 'embed']);
                         }} class="bi bi-code"></i>
                         <i onClick={() => {
                             setVisible(false);
                             setCount(prevValue => prevValue + 1);
-                            setPostBody([...postBody, { type: 'search', value: '' }]);
+                            setTypes([...types, 'search']);
                         }} class="bi bi-search"></i>
                         <i onClick={() => {
                             setVisible(false);
                             setCount(prevValue => prevValue + 1);
-                            setPostBody([...postBody, { type: 'text', value: '' }]);
+                            setTypes([...types, 'text']);
                         }} class="bi bi-fonts"></i>
                     </EditOptions>}
+
+                {/* <iframe id="myIframe" src="https://medium.com/bitsrc/stop-using-function-parameters-now-d320cf0932df"></iframe>
+
+                <div style={{ position: "relative", paddingBottom: "56.25%", height: 0, overflow: "hidden", maxWidth: "100%" }}>
+                    <iframe style={{ border: "none", position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }} src='' ></iframe>
+                </div> */}
+
             </Wrapper>
-                :
-                <Preview header={title} postBody={postBody} tags={tags} />}
         </Container>
     )
 }
-
-
-const Preview = ({ header, postBody, tags }) => {
-    return (
-        <Wrapper>
-            <PostName>{header}</PostName>
-
-            <TopicsList>
-                {tags.map(tag => <Topic>{tag}</Topic>)}
-            </TopicsList>
-            {/* <PostImage /> */}
-            <Body>{postBody.map(body => <>
-
-                {
-                    body.type === "text" && <p>{body.value}</p>
-                }
-                {
-                    body.type === "search" && body.value.length > 0 && <img style={{ width: "100%" }} src={body.value} />
-                }
-                {
-                    body.type === "file" && body.value.length > 0 && <img src={body.value} />
-                }
-            </>)
-            }</Body>
-        </Wrapper>
-    )
-
-}
-
 
 export default WritePost;

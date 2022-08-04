@@ -42,19 +42,11 @@ align-items: center;
 justify-content: space-between;
 `;
 const PostImage = styled.img`
- width:90%;
+ width:100%;
  height:35rem;
  margin:0rem auto ;
  background:#cbd5e1;
  `;
-
-const Topic = styled.div`
-padding: 0rem 0.5rem;
-gap:2rem;
-border-radius: 0.5rem;
-background: #cbd5e1;
-text-align: center;
-`;
 
 const PostName = styled.h3`
 width: fit-content;
@@ -77,6 +69,22 @@ gap:2rem;
 align-items: center;
 `;
 
+const TopicsList = styled.div`
+display: flex;
+flex-wrap: wrap;
+gap:2rem;
+`;
+const Topic = styled.div`
+padding: 0.5rem;
+border:2px solid #9ca3af;
+gap:2rem;
+border-radius: 1.5rem;
+background: #cbd5e1;
+text-align: center;
+cursor: pointer;
+`;
+
+
 const Post = ({ setOverflow }) => {
 
     const [src, setSrc] = useState('');
@@ -85,28 +93,39 @@ const Post = ({ setOverflow }) => {
     const [postedAt, setPostedAt] = useState('postedAtAt');
     const [likes, setLikes] = useState(0);
     const [header, setHeader] = useState('header of the post');
-    const [postBody, setPostBody] = useState('What is the key to healthy living? The most common answer to that is healthy diet. Eating right kind of food at the right time help you go a longer way. This brings up a question, what is right kind of food?! According to health experts, right kind of food is a diet that provides our body with every essential nutrient including protein, micro and macronutrients, fluid, fibre et al. These factors further help maintain and improve our overall health. The World Health Organisation states that healthy diet helps protect us against several "chronic non-communicable diseases" like diabetes, cancer and others. "Eating a variety of foods and consuming less salt, sugars and saturated and industrially-produced trans-fats, are essential for healthy diet," an article on WHO official website reads.')
-    const [commentCount,setCommentCount] = useState(0);
-
+    const [postBody, setPostBody] = useState([])
+    const [commentCount, setCommentCount] = useState(0);
+    const [topics,setTopics] = useState([]);
     const [likesVisible, setLikesVisible] = useState(false);
     const [commentsVisible, setCommentsVisible] = useState(false);
 
 
     useEffect(() => {
-        const params = (new URL(document.location)).searchParams;
-        const id = params.get('id');
+        const id = (new URL(document.location)).pathname.split('/')[2].split('@')[1];
         fetchById(id).then(res => {
             setHeader(res.postHeader);
-            setPostBody(res.postBody);
+            // setPostBody(res.postBody);
+            setTopics(res.topics);
             setPostedAt(res.setPostedAtAt);
             setLikes(res.likes);
             setCommentCount(res.commentCount);
+
+            let stringified = '[' + res.postBody.replace(/'/g, '"') + ']';
+
+
+            //    let services = JSON.parse(new Object(eval(postBody)))[0];
+            // console.log(JSON.parse(new Object(eval(postBody)))[0]);
+
+            // console.log(JSON.parse(stringified))
+            setPostBody(JSON.parse(stringified)[0])
+            // console.log(postBody[0])    
+
         })
     }, []);
 
-    useEffect(()=>{
-        likesVisible?setOverflow(true) : setOverflow(false);
-    },[likesVisible])
+    useEffect(() => {
+        likesVisible ? setOverflow(true) : setOverflow(false);
+    }, [likesVisible])
 
     return (
         <Wrapper likesVisible={likesVisible}>
@@ -117,25 +136,39 @@ const Post = ({ setOverflow }) => {
                     <small >{postedAt}</small>
                 </AlignLeft>
                 <AlignRight>
-                    <i class="bi bi-facebook"></i>
-                    <i class="bi bi-twitter"></i>
-                    <i class="bi bi-linkedin"></i>
-                    <i class="bi bi-link-45deg"></i>
-                    <i class="bi bi-bookmark-plus"></i>
+                    <i className="bi bi-facebook"></i>
+                    <i className="bi bi-twitter"></i>
+                    <i className="bi bi-linkedin"></i>
+                    <i className="bi bi-link-45deg"></i>
+                    <i className="bi bi-bookmark-plus"></i>
                 </AlignRight>
             </Header>
             <PostName>{header}</PostName>
-            <PostImage />
-            <Body>{postBody}</Body>
+            {/* <PostImage /> */}
+            <TopicsList>
+                {topics.map(topic => <Topic>{topic}</Topic>)}
+            </TopicsList>
+            <Body>{postBody && postBody.length > 0 && postBody.map(body =><>
+                    {
+                        body.type === "text" && <p>{body.value}</p>
+                    }
+                    {
+                        body.type === "image" || body.type === "search" && <PostImage src={body.value} />
+                    }
+                </>
+                
+            )
+            }
+            </Body>
             <PostFooter>
-                <a><i class="bi bi-suit-heart"></i><small style={{ marginLeft: "1rem", cursor: "pointer" }} onClick={() => 
+                <a><i className="bi bi-suit-heart"></i><small style={{ marginLeft: "1rem", cursor: "pointer" }} onClick={() =>
                     setLikesVisible(true)
                 }>{likes}</small></a>
-                <a><i class="bi bi-chat"></i><small style={{ marginLeft: "1rem", cursor: "pointer" }} onClick={() => {
+                <a><i className="bi bi-chat"></i><small style={{ marginLeft: "1rem", cursor: "pointer" }} onClick={() => {
                     setCommentsVisible(true);
                 }
                 }>{commentCount}</small></a>
-                <a><i class="bi bi-bookmark-plus"></i></a>
+                <a><i className="bi bi-bookmark-plus"></i></a>
             </PostFooter>
             <hr />
             <RelatedTopics />

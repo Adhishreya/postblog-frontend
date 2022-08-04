@@ -1,6 +1,48 @@
-import React, { useRef, useState } from 'react'
-import { Link, Outlet } from 'react-router-dom'
-import { loginService, registerService } from '../services/userService'
+import React, { useRef, useState } from 'react';
+import { Link, Outlet } from 'react-router-dom';
+import styled from 'styled-components';
+import { loginService, registerService } from '../services/userService';
+
+const Form = styled.form`
+width: 70%;
+margin:2rem auto;
+padding: 1rem;
+background-color: #64748b;
+display: flex;
+flex-direction: column;
+
+`
+const Input = styled.input`
+border: none;
+background-color: transparent;
+outline: none;
+border-bottom: 0.1rem solid #d1d5db;
+height: 2rem;
+padding: 1rem 0rem;
+margin-bottom: 2rem;
+color:aliceblue;
+font-size:1rem;
+`;
+
+const PasswordField = styled(Input)`
+width:90%;
+
+`
+
+const InputFlex = styled.div`
+width: 100%;
+display: flex;
+justify-content: space-between;
+`;
+
+const Label = styled.label`
+text-align: start;
+margin:1rem 0rem;
+font-size: 2rem;
+text-decoration: underline;
+color: #9ca3af;
+text-decoration-color:#9ca3af;
+`;
 
 const Authenticate = () => {
     return (
@@ -9,6 +51,7 @@ const Authenticate = () => {
         </div>
     )
 }
+
 
 
 export const Register = () => {
@@ -25,29 +68,25 @@ export const Register = () => {
     }
 
     return (
-        <div className="container">
+        <div className="container w-100">
             {/* <form method="post" action="@{/user/register/save}"
                 object="${user}"> */}
-            <form onSubmit={(e) => login(e)}>
-                <label htmlFor="userameControl"> Username </label>
-                <input
-                    id="usernameControl" type="text"
-                    className="form-control" onChange={e => setUsername(e.target.value)} />
+            <Form onSubmit={(e) => login(e)}>
+                <Label htmlFor="userame"> Username </Label>
+                <Input    id="username" type="text" onChange={e => setUsername(e.target.value)} />
                 {/* <p if="${#fields.hasErrors('username')}"
                     errorclassName="form-field-error" errors="*{username}"
                     className="error"></p> */}
 
-                <label htmlFor="emailControl"> Email </label>
-                <input id="emailControl"
-                    field="*{email}" type="text" className="form-control" onChange={e => setEmail(e.target.value)} />
+                <Label htmlFor="email"> Email </Label>
+                <Input id="email"   field="*{email}" type="text"  onChange={e => setEmail(e.target.value)} />
                 {/* <p each="error:${#fields.errors('email')}" text="${error}"
                     className="error"></p> */}
                 {/* <p className="text-danger" if="${message}" text="${message}"></p> */}
-                <label htmlFor="passwordControl"> Password </label>
+                <Label htmlFor="password"> Password </Label>
 
-                <div className="d-flex w-100 justify-content-between">
-                    <input autoComplete id="passwordControl" ref={showRef} field="*{password}" type="password"
-                        required className="form-control w-50"  onChange={e=>setPassword(e.target.value)}/>
+                <InputFlex>
+                    <PasswordField autoComplete id="password" ref={showRef} field="*{password}" type="password"  required  onChange={e=>setPassword(e.target.value)}/>
                     <i id="eye" style={{ color: "black" }} ref={classRef}
                         className="bi bi-eye-slash-fill" onClick={() => {
                             if (showRef.current.type === "password") {
@@ -58,15 +97,15 @@ export const Register = () => {
                                 classRef.current.className = "bi bi-eye-slash-fill";
                             }
                         }}></i>
-                </div>
+                </InputFlex>
 
                 {/* <p each="error:${#fields.errors('password')}" text="${error}"
                     className="error"></p> */}
                 <button type="submit" className="btn btn-success mt-3">Register</button>
 
-            </form>
+            </Form>
             <p>
-                Already a user? <a href="@{/login}">Login</a>
+                Already a user? <a href="/authenticate/login">Login</a>
             </p>
         </div>
     )
@@ -84,20 +123,20 @@ export const Login = () => {
     }
     return (
         <div className="container w-75">
-            <form onSubmit={(e) => login(e)}>
+            <Form onSubmit={(e) => login(e)}>
                 {/* action="@{/login}"  object="${updateUser}" */}
                 {/* <p if="${param.error}" className="alert alert-error error">Invalid
                     Email or Password Combination!</p> */}
-                <div className='d-flex w-full justify-content-between'>
-                    <label htmlFor="emailControl"> Email </label>
-                    <input autoComplete id="emailControl" type="email" required className="form-control  w-50" onChange={(e) => setEmail(e.target.value)} />
+                
+                    <Label htmlFor="email"> Email </Label>
+                    <Input autoComplete id="email" type="email"  onChange={(e) => setEmail(e.target.value)} />
                     {/* <p each="error:${#fields.errors('email')}" text="${error}"></p> */}
-                </div>
-                <div className='d-flex w-full justify-content-between'>
-                    <label htmlFor="passwordControl"> Password </label>
-                    <div className="d-flex w-full justify-content-between">
-                        <input autoComplete id="passwordControl" ref={showRef} onChange={(e) => setPassword(e.target.value)} type="password"
-                            required className="form-control w-75" /><i id="eye" style={{ color: "black" }} ref={classRef}
+                
+                
+                    <Label htmlFor="password"> Password </Label>
+                    <InputFlex>
+                        <PasswordField autoComplete id="password" ref={showRef} onChange={(e) => setPassword(e.target.value)} type="password"
+                            required /><i id="eye" style={{ color: "black" }} ref={classRef}
                                 className="bi bi-eye-slash" onClick={() => {
                                     if (showRef.current.type === "password") {
                                         showRef.current.type = "text";
@@ -107,15 +146,15 @@ export const Login = () => {
                                         classRef.current.className = "bi bi-eye-slash-fill";
                                     }
                                 }}></i>
-                    </div>
+                    </InputFlex>
 
                     {/* <p each="error:${#fields.errors('password')}" text="${error}"></p> */}
-                </div>
+                
 
 
                 <button type="submit" className="btn btn-success mt-3">Login</button>
 
-            </form>
+            </Form>
             <p>
                 New user? <Link to="/authenticate/register" className="btn btn-primary text-light">Register</Link>
             </p>

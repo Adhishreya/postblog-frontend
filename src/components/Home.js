@@ -3,6 +3,7 @@ import { Alert, ListGroup } from 'react-bootstrap';
 import styled from 'styled-components';
 import { fetchPosts } from '../services/postService';
 import { Link } from 'react-router-dom';
+import { addBookmark } from '../services/bookMarkService';
 
 const Avatar = styled.img`
 cursor: pointer;
@@ -49,12 +50,20 @@ const PostName = styled.div`
 font-size: 2rem;
 `;
 
-const Topic = styled.div`
-padding: 0rem 0.5rem;
+
+const TopicsList = styled.div`
+display: flex;
+flex-wrap: wrap;
 gap:2rem;
-border-radius: 0.5rem;
+`;
+const Topic = styled.div`
+padding: 0.5rem;
+border:2px solid #9ca3af;
+gap:2rem;
+border-radius: 1.5rem;
 background: #cbd5e1;
 text-align: center;
+cursor: pointer;
 `;
 
 const Home = () => {
@@ -73,15 +82,15 @@ const Home = () => {
                         No posts available</Alert>
 
                 }
-                {posts && posts!==null && posts.length>0?
+                {posts && posts !== null && posts.length > 0 ?
                     posts.map((post, index) =>
-                        <Link to={`/post/?id=${post.id}`} style={{ textDecoration: "none", color: "black" }}>
-                            <ListCard onClick={() => { }} src="" alt="" topic="topic" username={post.user.username} postedAt={post.postedAt} header={post.postHeader} body={post.postBody} />
+                        <Link key={post.id} to={`/post/${post.postHeader}@${post.id}`} style={{ textDecoration: "none", color: "black" }}>
+                            <ListCard id = {post.id} onClick={() => { }} src="" alt="" topics={post.topics} username={post.user.username} postedAt={post.postedAt} header={post.postHeader} body={post.postBody} />
                         </Link>
                     )
                     :
-                    <Link to={`/post/?id=""`} style={{ textDecoration: "none", color: "black" }}>
-                        <ListCard onClick={() => { }} src="" alt="" topic=" " username="username" postedAt="" header="" body="" />
+                    <Link to={`/post/id=""`} style={{ textDecoration: "none", color: "black" }}>
+                        <ListCard id='' onClick={() => { }} src="" alt="" topics="" username="username" postedAt="" header="" body="" />
                     </Link>
                 }
             </ListGroup>
@@ -94,27 +103,63 @@ export const ListCard = ({ src,
     username,
     postedAt,
     header,
-    topic,
+    topics,
     body,
+    id,
     saved }) => {
+
+
+    const [post, setPost] = useState('');
+    const [image, setImage] = useState('');
+
+    useEffect(() => {
+        if (body) {
+            let stringified = '[' + body.replace(/'/g, '"') + ']';
+
+            stringified = JSON.parse(stringified)[0];
+
+            stringified.forEach(item => {
+                if (item.type === "text") {
+                    setPost(item.value);
+                    return false;
+                }
+            });
+
+            stringified.forEach(item => {
+                if (item.type === "search" || item.type === "image") {
+                    setImage(item.value);
+                    return false;
+                }
+            })
+        }
+
+    }, [])
+
+    const bookMarkPost = (id) => {
+        addBookmark(id);
+        // console.log(id)
+    }
+
     return (
         <CustomListGroupItem className="mt-3 w-100 mx-auto" onClick={() => { }}>
             <div className=" w-full ">
                 <Header>
                     <Avatar src={src} alt={alt} />
-                    <Link style={{color:"black" ,textDecoration:"none"}} to={`/@${username}/home`}><small>{username}</small></Link>
+                    <Link style={{ color: "black", textDecoration: "none" }} to={`/@${username}/home`}><small>{username}</small></Link>
                     <small >{postedAt}</small>
                 </Header>
                 <PostBody>
                     <PostDetails>
                         <PostName className="fw-bold ">{header}</PostName>
-                        <div className='text-start'>{body}</div>
+                        <div className='text-start'>{post.slice(0,150)}.....</div>
                         <PostFooter>
-                            <Topic>{topic?topic:"  "}</Topic>
-                            {saved ? <a><i class="bi bi-bookmark-fill"></i></a> : <a><i class="bi bi-bookmark-plus"></i></a>}
+                            <TopicsList>
+                                {topics && topics.length>0 && topics.map((topic,index) => <Topic key={index}>{topic}</Topic>)}
+                            </TopicsList>
+                            {saved ? <button ><i className="bi bi-bookmark-fill"></i></button> : <div onClick={()=>bookMarkPost(id)}><i className="bi bi-bookmark-plus"></i></div>}
                         </PostFooter>
                     </PostDetails>
-                    <PostImage />
+                    <PostImage src={image} />
                 </PostBody>
             </div>
         </CustomListGroupItem>

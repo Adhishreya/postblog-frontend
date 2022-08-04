@@ -15,7 +15,7 @@ const RelatedTopics = () => {
 
     return (
         <Wrapper>
-            <ListCard src="" alt="" topic="topic" username="username" saved={false} postedAt="postedAt" header="postHeader" body="body" />
+            <ListCard src="" alt="" topic="" username="username" saved={false} postedAt="postedAt" header="postHeader" body="" />
         </Wrapper>
     )
 }

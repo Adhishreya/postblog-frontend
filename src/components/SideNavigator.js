@@ -15,7 +15,7 @@ const InputComponent = styled.div`
 display: flex;
 padding: 0.5rem;
 border:2px solid #9ca3af;
-justify-content: space-between;
+/* justify-content: space-between; */
 align-items: center;
 gap:2rem;
 border-radius: 1.5rem;
@@ -138,7 +138,7 @@ const SideNavigator = () => {
     <Wrapper className='d-flex flex-column me-3'>
       <Button >Get Unlimited Access</Button>
       <InputComponent>
-        <i class="bi bi-search"></i>
+        <i className="bi bi-search"></i>
         <Input placeholder='Search user/article' />
       </InputComponent>
 
@@ -159,7 +159,7 @@ const SideNavigator = () => {
       }
       </div>
       <div className="my-3 popular users fw-bolder text-start fs-6">Recommended Topics</div>
-      <TopicsList>{topics.map(topic => <Topic>{topic}</Topic>)}</TopicsList>
+      <TopicsList>{topics.map((topic,index) => <Topic key={index}>{topic}</Topic>)}</TopicsList>
       <div className="popular users fw-bolder text-start fs-6 my-3">Who to folow</div>
       <Link style={{color:"black" ,textDecoration:"none"}} to={`/@Demo1/home`}><FollowCards username="Demo1" designation="Author" bio="Creating the next" src="" /></Link>
       <Link style={{color:"black" ,textDecoration:"none"}} to={`/@Demo2/home`}><FollowCards username="Demo2" designation="Author" bio="Creating the next" src="" /></Link>
