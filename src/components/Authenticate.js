@@ -2,6 +2,8 @@ import React, { useRef, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 import { loginService, registerService } from '../services/userService';
+import { useDispatch } from 'react-redux'
+import { loadingStart, loginSuccess, loginFailure } from '../redux/userSlice';
 
 const Form = styled.form`
 width: 70%;
@@ -73,20 +75,20 @@ export const Register = () => {
                 object="${user}"> */}
             <Form onSubmit={(e) => login(e)}>
                 <Label htmlFor="userame"> Username </Label>
-                <Input    id="username" type="text" onChange={e => setUsername(e.target.value)} />
+                <Input id="username" type="text" onChange={e => setUsername(e.target.value)} />
                 {/* <p if="${#fields.hasErrors('username')}"
                     errorclassName="form-field-error" errors="*{username}"
                     className="error"></p> */}
 
                 <Label htmlFor="email"> Email </Label>
-                <Input id="email"   field="*{email}" type="text"  onChange={e => setEmail(e.target.value)} />
+                <Input id="email" field="*{email}" type="text" onChange={e => setEmail(e.target.value)} />
                 {/* <p each="error:${#fields.errors('email')}" text="${error}"
                     className="error"></p> */}
                 {/* <p className="text-danger" if="${message}" text="${message}"></p> */}
                 <Label htmlFor="password"> Password </Label>
 
                 <InputFlex>
-                    <PasswordField autoComplete id="password" ref={showRef} field="*{password}" type="password"  required  onChange={e=>setPassword(e.target.value)}/>
+                    <PasswordField autoComplete id="password" ref={showRef} field="*{password}" type="password" required onChange={e => setPassword(e.target.value)} />
                     <i id="eye" style={{ color: "black" }} ref={classRef}
                         className="bi bi-eye-slash-fill" onClick={() => {
                             if (showRef.current.type === "password") {
@@ -115,41 +117,49 @@ export const Login = () => {
     const showRef = useRef();
     const classRef = useRef();
     const [email, setEmail] = useState();
-    const [password, setPassword] = useState()
+    const [password, setPassword] = useState();
 
-    const login = (e) => {
+    const dispatcher = useDispatch();
+
+    const handleSignin = async (e) => {
         e.preventDefault();
-        loginService({ email, password })
+        dispatcher(loadingStart());
+        const status = await loginService({ email, password });
+        if (status === null) {
+            dispatcher(loginFailure());
+        } else {
+            dispatcher(loginSuccess(status));
+        }
     }
     return (
         <div className="container w-75">
-            <Form onSubmit={(e) => login(e)}>
+            <Form onSubmit={e => handleSignin(e)}>
                 {/* action="@{/login}"  object="${updateUser}" */}
                 {/* <p if="${param.error}" className="alert alert-error error">Invalid
                     Email or Password Combination!</p> */}
-                
-                    <Label htmlFor="email"> Email </Label>
-                    <Input autoComplete id="email" type="email"  onChange={(e) => setEmail(e.target.value)} />
-                    {/* <p each="error:${#fields.errors('email')}" text="${error}"></p> */}
-                
-                
-                    <Label htmlFor="password"> Password </Label>
-                    <InputFlex>
-                        <PasswordField autoComplete id="password" ref={showRef} onChange={(e) => setPassword(e.target.value)} type="password"
-                            required /><i id="eye" style={{ color: "black" }} ref={classRef}
-                                className="bi bi-eye-slash" onClick={() => {
-                                    if (showRef.current.type === "password") {
-                                        showRef.current.type = "text";
-                                        classRef.current.className = "bi bi-eye-fill";
-                                    } else {
-                                        showRef.current.type = "password";
-                                        classRef.current.className = "bi bi-eye-slash-fill";
-                                    }
-                                }}></i>
-                    </InputFlex>
 
-                    {/* <p each="error:${#fields.errors('password')}" text="${error}"></p> */}
-                
+                <Label htmlFor="email"> Email </Label>
+                <Input autoComplete id="email" type="email" onChange={(e) => setEmail(e.target.value)} />
+                {/* <p each="error:${#fields.errors('email')}" text="${error}"></p> */}
+
+
+                <Label htmlFor="password"> Password </Label>
+                <InputFlex>
+                    <PasswordField autoComplete id="password" ref={showRef} onChange={(e) => setPassword(e.target.value)} type="password"
+                        required /><i id="eye" style={{ color: "black" }} ref={classRef}
+                            className="bi bi-eye-slash" onClick={() => {
+                                if (showRef.current.type === "password") {
+                                    showRef.current.type = "text";
+                                    classRef.current.className = "bi bi-eye-fill";
+                                } else {
+                                    showRef.current.type = "password";
+                                    classRef.current.className = "bi bi-eye-slash-fill";
+                                }
+                            }}></i>
+                </InputFlex>
+
+                {/* <p each="error:${#fields.errors('password')}" text="${error}"></p> */}
+
 
 
                 <button type="submit" className="btn btn-success mt-3">Login</button>

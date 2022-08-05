@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
+import { useSelector } from 'react-redux'
+import { follow, getFollowers, getFollowing } from '../services/userService';
 
 const Wrapper = styled.div`
 height: fit-content;
@@ -8,7 +10,7 @@ position:sticky;
 top: 0;
 padding:0rem 2rem 0rem 2rem;
 border-left: 2px solid #9ca3af;
-height: 100%;
+height: fit-content;
 gap:2rem;
 `;
 
@@ -65,6 +67,7 @@ border-radius:50%;
 
 const UserInfo = styled.div`
 display:flex;
+width: 14rem;
 flex-direction: column;
 align-items: flex-start;
 justify-content: start;
@@ -117,8 +120,41 @@ justify-content: start;
 text-align: start;
 `;
 
+const FlexInfo = styled.div`
+display: flex;
+align-items: center;
+gap:2rem;
+margin: 1rem 0rem;
+`;
+
+
 const UserSideNavigator = () => {
-    const [followers,setFollowers] = useState(['demo1',"demo2","demo3","demo4"]);
+    const [followers, setFollowers] = useState([]);
+    const [following, setFollowing] = useState([]);
+
+    const [username, setUsername] = useState();
+    const [src, setSrc] = useState();
+    const [bio, setBio] = useState()
+
+    const { post } = useSelector(state => state.post);
+    const { user } = useSelector(state => state.user);
+
+    useEffect(() => {
+        if (post) {
+            setUsername(post.user.username);
+            setSrc(post.user.image);
+            setBio(post.user.bio);
+        }
+        if (post && user) {
+            getFollowers(post.user.id, user.accessToken).then(res => setFollowers(res));
+            getFollowing(post.user.id, user.accessToken).then(res => setFollowing(res));
+        }
+
+    }, []);
+
+    const followUser = () => {
+        follow(post.user.id, user.accessToken);
+    }
 
     return (
         <Wrapper className='d-flex flex-column me-3'>
@@ -127,32 +163,34 @@ const UserSideNavigator = () => {
                 <i className="bi bi-search"></i>
                 <Input placeholder='Search user/article' />
             </InputComponent>
-            <Avatar />
+            <FlexInfo>
+                <Avatar src={src} />
+                <UserName>{username}</UserName>
+            </FlexInfo>
             <UserBios>
-            <UserName>username</UserName>
-            <UserHeader>0 Followers</UserHeader>
-            <UserInfo>bio</UserInfo>
+                <UserHeader>{followers && followers.length} Followers</UserHeader>
+                <UserInfo>{bio}</UserInfo>
             </UserBios>
             <Card>
-            <Button style={{ backgroundColor: "green"  ,width:"8rem"}}>Follow</Button>
-            <Button style={{ backgroundColor: "green", borderRadius: "50%" ,width:"2.5rem"}}><i className="bi bi-envelope-plus"></i></Button>
+                <Button style={{ backgroundColor: "green", width: "8rem" }} onClick={() => followUser()}>Follow</Button>
+                <Button style={{ backgroundColor: "green", borderRadius: "50%", width: "2.5rem" }}><i className="bi bi-envelope-plus"></i></Button>
             </Card>
             <Header4>
-        Following
-    </Header4>
-    <TopicList>
-            {followers.map((follow,id)=><FollowComponent key={id} username={follow}/>)}
-    </TopicList>
-           
+                Following
+            </Header4>
+            <TopicList>
+                {followers.map((follow, id) => <FollowComponent key={id} username={follow} />)}
+            </TopicList>
+
         </Wrapper>
     )
 }
 
-const FollowComponent = ({username}) =>{
-    return(
+const FollowComponent = ({ username }) => {
+    return (
         <FollowCard>
-        <Image/>
-        <User>{username}</User>
+            <Image />
+            <User>{username}</User>
         </FollowCard>
     )
 }

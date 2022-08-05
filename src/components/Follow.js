@@ -55,7 +55,7 @@ display: flex;
 flex-direction: column;
 `;
 
-const Likes = ({ setLikesVisible, header }) => {
+const Follow = ({ setLikesVisible, header }) => {
 
     const [likedBy, setLikedBy] = useState([]);
     const [count, setCount] = useState(0);
@@ -99,8 +99,7 @@ const Likes = ({ setLikesVisible, header }) => {
         </Container>
     )
 }
-// Image
-const LikedUsers = ({ username, id, image }) => {
+const FollowUsers = ({ username, id, image }) => {
     return (
         <List>
             <Image src={image} />
@@ -110,4 +109,4 @@ const LikedUsers = ({ username, id, image }) => {
     )
 }
 
-export default Likes;
+export default Follow;

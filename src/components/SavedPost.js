@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { getBookMarks } from '../services/bookMarkService';
 import { ListCard } from './Home';
+import {useDispatch,useSelector} from 'react-redux';
+
 
 const Wrapper = styled.div`
 width: 100%;
@@ -12,26 +14,13 @@ flex-direction: column;
 const SavedPost = () => {
 
   const [post, setPost] = useState([]);
-  // const [image, setImage] = useState('');
-  // const [body, setBody] = useState();
-  // const [header, setHeader] = useState();
-  // const [postedAt, setPostedAt] = useState();
-  // const [username, setUsername] = useState('');
-  // const [topic, setTopics] = useState([]);
+
+  const {user} = useSelector(state => state.user);
 
   useEffect(() => {
-    getBookMarks().then(res => {
-      setPost(res.post)
-      // setBody(res.post.postBody);
-      // setHeader(res.post.postHeader);
-      // setPostedAt(res.post.postedAt);
-      // // setUsername(res.post.user.username);
-      // setTopics(res.post.topics);
-      //   alt,
-      // username,
-      // id,
-      // saved
-
+    if(user)
+    getBookMarks(user.accessToken).then(res => {
+      setPost(res.post);
     });
   }, [])
 

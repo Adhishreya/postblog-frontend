@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { fetchById } from '../services/postService';
+import { formatDate } from '../utility/formatDate';
 import Comments from './Comments';
 import Likes from './Likes';
 import RelatedTopics from './RelatedTopics';
+import { useSelector, useDispatch } from 'react-redux'
+import {selected, failure, loading} from '../redux/postSlice'; 
 
 const Wrapper = styled.div`
 width: 100%;
@@ -89,8 +92,8 @@ const Post = ({ setOverflow }) => {
 
     const [src, setSrc] = useState('');
     const [alt, setAlt] = useState('');
-    const [username, setUsername] = useState('username');
-    const [postedAt, setPostedAt] = useState('postedAtAt');
+    const [username, setUsername] = useState();
+    const [postedAt, setPostedAt] = useState(null);
     const [likes, setLikes] = useState(0);
     const [header, setHeader] = useState('header of the post');
     const [postBody, setPostBody] = useState([])
@@ -99,33 +102,33 @@ const Post = ({ setOverflow }) => {
     const [likesVisible, setLikesVisible] = useState(false);
     const [commentsVisible, setCommentsVisible] = useState(false);
 
+    const dispatcher = useDispatch();
 
     useEffect(() => {
         const id = (new URL(document.location)).pathname.split('/')[2].split('@')[1];
+
+        dispatcher(loading());
+
         fetchById(id).then(res => {
+
+            dispatcher(selected(res));
+
             setHeader(res.postHeader);
-            // setPostBody(res.postBody);
             setTopics(res.topics);
-            setPostedAt(res.setPostedAtAt);
+            setPostedAt(formatDate(res.postedAtAt));
             setLikes(res.likes);
             setCommentCount(res.commentCount);
+            setUsername(res.user.username);
+            setSrc(res.user.image);
 
             let stringified = '[' + res.postBody.replace(/'/g, '"') + ']';
-
-
-            //    let services = JSON.parse(new Object(eval(postBody)))[0];
-            // console.log(JSON.parse(new Object(eval(postBody)))[0]);
-
-            // console.log(JSON.parse(stringified))
-            setPostBody(JSON.parse(stringified)[0])
-            // console.log(postBody[0])    
-
+            setPostBody(JSON.parse(stringified)[0]);
         })
     }, []);
 
     useEffect(() => {
         likesVisible ? setOverflow(true) : setOverflow(false);
-    }, [likesVisible])
+    }, [likesVisible]);
 
     return (
         <Wrapper likesVisible={likesVisible}>
@@ -146,9 +149,10 @@ const Post = ({ setOverflow }) => {
             <PostName>{header}</PostName>
             {/* <PostImage /> */}
             <TopicsList>
-                {topics.map(topic => <Topic>{topic}</Topic>)}
+                {topics.map((topic,index) => <Topic key={index}>{topic}</Topic>)}
             </TopicsList>
-            <Body>{postBody && postBody.length > 0 && postBody.map(body =><>
+            <Body>{postBody && postBody.length > 0 && postBody.map(body =>
+            <>
                     {
                         body.type === "text" && <p>{body.value}</p>
                     }

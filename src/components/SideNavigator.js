@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components';
 import { fetchMostLikedPosts, fetchMostRecentPosts } from '../services/postService';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Wrapper = styled.div`
 height: fit-content;
@@ -103,9 +103,9 @@ color: #a1a1aa;
 
 `;
 
-const Post  = styled.div`
-display:flex;
-margin-top: 1rem;
+const Post = styled.div`
+ display:flex;
+ margin-top: 1rem;
  width: 100%;
  gap:1rem;
  cursor: pointer;
@@ -115,7 +115,7 @@ margin-top: 1rem;
 const PostName = styled.h3`
 width: fit-content;
 margin-bottom: 0.5rem;
-
+font-size: 1.5rem;
 `;
 
 const SideNavigator = () => {
@@ -151,39 +151,42 @@ const SideNavigator = () => {
       <div className='my-3 recent posts fw-bolder text-start fs-6'>What We're Reading Today</div>
       <div className='mb-4 justify-content-start'>
         {recentPosts ? recentPosts.map((post, index) =>
-          <PostCard key={post.id} postHeader={post.postHeader} user={post.user.username} />
-          
+          <Link key={post.id} to={`/post/${post.postHeader}@${post.id}`} style={{ textDecoration: "none", color: "black" }}>
+            <PostCard src={post.user.image} key={post.id} postHeader={post.postHeader} user={post.user.username} />
+          </Link>
         )
-        :
-        <PostCard postHeader=" " user=" " />
-      }
+          :
+          <PostCard postHeader=" " user=" " />
+        }
       </div>
       <div className="my-3 popular users fw-bolder text-start fs-6">Recommended Topics</div>
-      <TopicsList>{topics.map((topic,index) => <Topic key={index}>{topic}</Topic>)}</TopicsList>
+      <TopicsList>{topics.map((topic, index) => <Topic key={index}>{topic}</Topic>)}</TopicsList>
       <div className="popular users fw-bolder text-start fs-6 my-3">Who to folow</div>
-      <Link style={{color:"black" ,textDecoration:"none"}} to={`/@Demo1/home`}><FollowCards username="Demo1" designation="Author" bio="Creating the next" src="" /></Link>
-      <Link style={{color:"black" ,textDecoration:"none"}} to={`/@Demo2/home`}><FollowCards username="Demo2" designation="Author" bio="Creating the next" src="" /></Link>
+      <Link style={{ color: "black", textDecoration: "none" }} to={`/@Demo1/home`}><FollowCards username="Demo1" designation="Author" bio="Creating the next" src="" /></Link>
+      <Link style={{ color: "black", textDecoration: "none" }} to={`/@Demo2/home`}><FollowCards username="Demo2" designation="Author" bio="Creating the next" src="" /></Link>
     </Wrapper>
   )
 }
 
 
-const PostCard = ({postHeader,
-  user}) => {
+const PostCard = ({
+  postHeader,
+  src,
+  user }) => {
   return (
     <>
       <Post>
-        <Image/>
-        <UserName>{user?user:" "}</UserName>
+        <Image src={src} />
+        <UserName>{user ? user : " "}</UserName>
       </Post>
-      <PostName className='fw-bold '>{postHeader?postHeader :" "}</PostName>
+      <PostName className='fw-bold '>{postHeader ? postHeader : " "}</PostName>
     </>)
 }
 
-const FollowCards = ({ username,designation,bio,src }) => {
+const FollowCards = ({ username, designation, bio, src }) => {
   return (
     <Card>
-      <Avatar src={src}/>
+      <Avatar src={src} />
       <UserInfo>
         <UserName >{username}</UserName>
         <UserBios >{designation}</UserBios>

@@ -1,5 +1,5 @@
 import './App.css';
-import { Routes, Route, Link, Navigate, useSearchParams, useRoutes } from 'react-router-dom';
+import { Routes, Route, Link, Navigate, useSearchParams, useRoutes,useNavigate,useLocation } from 'react-router-dom';
 import { Authenticate, Home, Login, Register, SideNavigator } from './components';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -13,6 +13,8 @@ import UserPosts from './components/UserPosts';
 import UserSideNavigator from './components/UserSideNavigator';
 import MyProfielNavigator from './components/MyProfielNavigator';
 import UserProfile from './components/UserProfile';
+
+import { useSelector } from 'react-redux';
 
 const Image = styled.img`
 cursor: pointer;
@@ -88,10 +90,10 @@ const App = () => {
             </Route>
             <Route path='/home' element={<Home />} />
             <Route path='/post/*' element={<Post setOverflow={setOverflow} />} />
-            <Route path='/me/lists' element={<SavedPost />} />
-            <Route path='/me/stories/*' element={<Stories />} />
-            <Route path='/@:username/*' element={<UserPosts />} />
-            <Route path='/p/97ac9feca675/edit' element={<WritePost />} />
+            <Route path='/me/lists' element={<RequiredAuth><SavedPost /></RequiredAuth>} />
+            <Route path='/me/stories/*' element={<RequiredAuth><Stories /></RequiredAuth>} />
+            <Route path='/@:username/*' element={<UserPosts />} />            
+            <Route path='/p/97ac9feca675/edit' element={<RequiredAuth><WritePost /></RequiredAuth>} />            
             <Route path='/authenticate' element={<Authenticate />}>
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
@@ -105,7 +107,7 @@ const App = () => {
             )}
             <Route path={`/post/:postId`} element={<UserSideNavigator />} />
             <Route path={'/@:username/*'} element={<UserSideNavigator />} />
-            <Route path="/me/lists" element={<MyProfielNavigator/>}/>
+            <Route path="/me/lists" element={<RequiredAuth><MyProfielNavigator/></RequiredAuth>}/>
             <Route path= "/me/@:username" element={<UserProfile/>}/>
           </Routes>
         </div>
@@ -119,6 +121,18 @@ const App = () => {
       </Wrapper>
     </Container>
   );
+};
+
+
+const RequiredAuth = ({children}) =>{
+  const {user} = useSelector(state => state.user);
+  const navigate = useNavigate();
+  const location = useLocation();
+  if(user=== null){
+    // navigate("/authenticate/login");
+  return  <Navigate to="/authenticate/login" state={{from : location }} replace/>
+  }
+  return children;
 }
 
 export default App;

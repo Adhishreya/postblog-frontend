@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components';
-
+import {useSelector} from 'react-redux';
 
 const Wrapper = styled.div`
 height: fit-content;
@@ -24,7 +24,6 @@ border-radius: 1.5rem;
 const Input = styled.input`
 border:none;
 outline:none;
-/* border-bottom: 2px solid #9ca3af; */
 `;
 
 const TopicsList = styled.div`
@@ -99,11 +98,20 @@ font-weight: 500;
 text-align: start;
 `
 ;
+
+const FlexInfo = styled.div`
+display: flex;
+align-items: center;
+gap:2rem;
+margin: 1rem 0rem;
+`;
+
 const MyProfielNavigator = () => {
 
-    const [loggedIn,setLoggedIn] = useState('currentusername');
-    const [followers,setFollowers] = useState(['demo1',"demo2","demo3","demo4"]);
+    const [loggedIn,setLoggedIn] = useState();
+    const [followers,setFollowers] = useState([]);
 
+    const {user}  = useSelector(state => state.user);
   return (
     <Wrapper className='d-flex flex-column me-3'>
     <Button >Get Unlimited Access</Button>
@@ -111,9 +119,11 @@ const MyProfielNavigator = () => {
         <i class="bi bi-search"></i>
         <Input placeholder='Search user/article' />
     </InputComponent>
-    <Avatar />
     <UserBios>
-    <UserName>currentusername</UserName>
+        <FlexInfo>
+        <Avatar />
+        <UserName>{user && user.username}</UserName>
+        </FlexInfo>
     <ProfileEdit>Edit</ProfileEdit>
     </UserBios>
     <Header4>

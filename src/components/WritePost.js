@@ -27,7 +27,6 @@ border:none;
 outline:none;
 height:auto;
 resize: vertical;
-height: fit-content;
 `;
 
 const Button = styled.button`
@@ -121,13 +120,6 @@ font-size: 2rem;
 margin: 1rem 0rem;
 `;
 
-// const PostImage = styled.img`
-//  width:90%;
-//  height:35rem;
-//  margin:0rem auto ;
-//  background:#cbd5e1;
-//  `;
-
 const Body = styled.div` 
 
 margin: 1rem 0rem;
@@ -186,16 +178,8 @@ const WritePost = () => {
     }
 
     const publishStory = () => {
-
-        // let postDetail = values.map((value, index) => {
-        //     return { value: value, type: types[index] }
-        // });
-        // setPostBody(postBody);;
         let postDetails = JSON.stringify(postBody);
-        // console.log(postDetails);
-        // console.log(JSON.parse(postDetails))
-        savePost(title, postDetails, tags)
-
+        savePost(title, postDetails, tags);
     }
 
 
@@ -220,18 +204,24 @@ const WritePost = () => {
                     {
                         Array.from({ length: tagCount }).map((tag, index) =>
 
-                            <TagCard>
-                                <TagInput defaultValue={tags[index] ? tags[index] : ''} ref={tagsRef} style={{width:""}} onChange={e => {
+                            <TagCard key={index}>
+                                <TagInput defaultValue={tags[index] ? tags[index] : ''} ref={tagsRef} style={{width:`${tagsRef.current && parseInt(tagsRef.current.value.length)+1}em`}} onChange={e => {
                                     handleTags(e.target.value, index);
-                                    console.log(tagsRef.current.style.width);
-                                    tagsRef.current.style.width = parseInt(tagsRef.current.style.width+1)+"em";
+                                    console.log(tagsRef.current.value.length );
+                                    // tagsRef.current.style.width = parseInt(tagsRef.current.style.width+1)+"em";
                                 }
                                 }
                                 />
-                                <Close onClick={() => { setTagCount(prevValue => prevValue - 1) }}
-                                    className='displa-6 text-center fs-1 fw-bold'><i class="bi bi-x"></i></Close>
+                                <Close onClick={() => { 
+                                    setTagCount(prevValue => prevValue - 1) ;
+                                    let tempTags = tags;
+                                    tags.splice(index,1);
+                                    setTags(tempTags)
+                                }
+                                }
+                                    className='displa-6 text-center fs-1 fw-bold'><i className="bi bi-x"></i></Close>
                                 <Button onClick={() => { setTagCount(prevValue => prevValue + 1) }}>
-                                    <i class="bi bi-plus-circle"></i>
+                                    <i className="bi bi-plus-circle"></i>
                                 </Button>
                             </TagCard>
 
@@ -254,13 +244,13 @@ const WritePost = () => {
                                     postBody.splice(index, 1);
                                     setPostBody(postBody);
                                     setCount(prevValue => prevValue - 1);
-                                }}> <i class="bi bi-dash-circle"></i>
+                                }}> <i className="bi bi-dash-circle"></i>
                                 </Button>
                                 :
                                 <Button id={index + 1} ref={removeRef} onClick={c => {
                                     setVisible(true);
                                 }}>
-                                    <i class="bi bi-plus-circle"></i>
+                                    <i className="bi bi-plus-circle"></i>
                                 </Button>
                             }
 
@@ -270,8 +260,13 @@ const WritePost = () => {
                                     key={index + 1}
                                     type={postBody[index].type}
                                     placeholder='Write your story'
-                                    onChange={e => modifyInputArray(e.target.value, index)}
-                                    style={{ fontSize: "2rem" }} ref={areaRef}
+                                    onChange={e => 
+                                        {
+                                            modifyInputArray(e.target.value, index);
+                                            // areaRef.current.height = areaRef.current.scrollHeight + "px";
+                                        }
+                                    }
+                                    style={{ fontSize: "2rem" ,height : `${areaRef.current && areaRef.current.scrollHeight +  5}px`}} ref={areaRef}
                                 />
                             }
                             {
@@ -283,7 +278,7 @@ const WritePost = () => {
                             {
                                 postBody[index].type === 'search' &&
                                 <InputComponent>
-                                    <i class="bi bi-search"></i>
+                                    <i className="bi bi-search"></i>
                                     <Input defaultValue={postBody[index].value ? postBody[index].value : ""} placeholder='Paste external image url' onChange={e => modifyInputArray(e.target.value, index)} />
                                 </InputComponent>
                             }
@@ -301,27 +296,27 @@ const WritePost = () => {
                 }
                 {visible &&
                     <EditOptions>
-                        <i onClick={() => setVisible(false)} class="bi bi-x-circle"></i>
+                        <i onClick={() => setVisible(false)} className="bi bi-x-circle"></i>
                         <i onClick={() => {
                             setVisible(false);
                             setCount(prevValue => prevValue + 1);
                             setPostBody([...postBody, { type: 'file', value: '' }]);
-                        }} class="bi bi-camera"></i>
+                        }} className="bi bi-camera"></i>
                         <i onClick={() => {
                             setVisible(false);
                             setCount(prevValue => prevValue + 1);
                             setPostBody([...postBody, { type: 'embed', value: '' }]);
-                        }} class="bi bi-code"></i>
+                        }} className="bi bi-code"></i>
                         <i onClick={() => {
                             setVisible(false);
                             setCount(prevValue => prevValue + 1);
                             setPostBody([...postBody, { type: 'search', value: '' }]);
-                        }} class="bi bi-search"></i>
+                        }} className="bi bi-search"></i>
                         <i onClick={() => {
                             setVisible(false);
                             setCount(prevValue => prevValue + 1);
                             setPostBody([...postBody, { type: 'text', value: '' }]);
-                        }} class="bi bi-fonts"></i>
+                        }} className="bi bi-fonts"></i>
                     </EditOptions>}
             </Wrapper>
                 :
@@ -337,7 +332,7 @@ const Preview = ({ header, postBody, tags }) => {
             <PostName>{header}</PostName>
 
             <TopicsList>
-                {tags.map(tag => <Topic>{tag}</Topic>)}
+                {tags.map((tag,index) => <Topic key={index}>{tag}</Topic>)}
             </TopicsList>
             {/* <PostImage /> */}
             <Body>{postBody.map(body => <>

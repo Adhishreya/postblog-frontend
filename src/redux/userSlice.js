@@ -14,9 +14,9 @@ export const userSlice = createSlice({
             state.loading = true
         },
         loginSuccess: (state, action) => {
-            state.user.id = action.payload.id;
-            state.username = action.payload.username;
-            state.accessToken = action.payload.accessToken;
+            state.user = action.payload;
+            // state.user.username = action.payload.username;
+            // state.user.accessToken = action.payload.accessToken;
             state.loading = false;
             state.error = false
         },

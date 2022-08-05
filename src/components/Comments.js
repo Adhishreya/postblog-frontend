@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import styled from 'styled-components';
 import { getCommentsById } from '../services/commentService';
 
+import { useSelector } from 'react-redux';
+
 const Container = styled.div`
 position: absolute;
 background: aliceblue;
@@ -106,17 +108,15 @@ box-shadow: 0rem 0rem 1rem 1rem #d1d5db;
 
 const Comments = ({ setCommentsVisible, commentCount }) => {
 
-    const [comments, setComments] = useState([]);
+    const {user} = useSelector(state =>  state.user );
+    const {post} = useSelector(state =>  state.post );
 
-    const logedInUsername = 'username'
+    const [comments, setComments] = useState([]);
 
     const [postcomment,setPostComment] = useState('');
 
     useState(()=>{
-        const params = (new URL(document.location)).searchParams;
-        const id = params.get('id');
-
-        getCommentsById(id).then(res=>setComments(res));
+        post && getCommentsById(post.id).then(res=>setComments(res));
     },[])
 
     return (
@@ -132,7 +132,7 @@ const Comments = ({ setCommentsVisible, commentCount }) => {
                 <Card>
                 <Header>
                     <Image/> 
-                    <h6>{logedInUsername}</h6>
+                    <h6>{user && user.username}</h6>
                     </Header>
                     <hr/>
                     <Input placeholder='What are your thoughts?' onChange={(e)=>setPostComment(e.target.value)}/>

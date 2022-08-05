@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { fetchPosts } from '../services/postService';
 import { Link } from 'react-router-dom';
 import { addBookmark } from '../services/bookMarkService';
+import { formatDate } from '../utility/formatDate';
 
 const Avatar = styled.img`
 cursor: pointer;
@@ -85,12 +86,12 @@ const Home = () => {
                 {posts && posts !== null && posts.length > 0 ?
                     posts.map((post, index) =>
                         <Link key={post.id} to={`/post/${post.postHeader}@${post.id}`} style={{ textDecoration: "none", color: "black" }}>
-                            <ListCard id = {post.id} onClick={() => { }} src="" alt="" topics={post.topics} username={post.user.username} postedAt={post.postedAt} header={post.postHeader} body={post.postBody} />
+                            <ListCard id={post.id} onClick={() => { }} src={post.user.image} alt="" topics={post.topics} username={post.user.username} postedAt={post.postedAtAt} header={post.postHeader} body={post.postBody} />
                         </Link>
                     )
                     :
                     <Link to={`/post/id=""`} style={{ textDecoration: "none", color: "black" }}>
-                        <ListCard id='' onClick={() => { }} src="" alt="" topics="" username="username" postedAt="" header="" body="" />
+                        {/* <ListCard id='' onClick={() => { }} src="" alt="" topics="" username="username" postedAt="" header="" body="" /> */}
                     </Link>
                 }
             </ListGroup>
@@ -133,11 +134,10 @@ export const ListCard = ({ src,
             })
         }
 
-    }, [])
+    }, []);
 
     const bookMarkPost = (id) => {
         addBookmark(id);
-        // console.log(id)
     }
 
     return (
@@ -146,17 +146,17 @@ export const ListCard = ({ src,
                 <Header>
                     <Avatar src={src} alt={alt} />
                     <Link style={{ color: "black", textDecoration: "none" }} to={`/@${username}/home`}><small>{username}</small></Link>
-                    <small >{postedAt}</small>
+                    <small >{formatDate(postedAt)}</small>
                 </Header>
                 <PostBody>
                     <PostDetails>
                         <PostName className="fw-bold ">{header}</PostName>
-                        <div className='text-start'>{post.slice(0,150)}.....</div>
+                        <div className='text-start'>{post.slice(0, 150)}.....</div>
                         <PostFooter>
                             <TopicsList>
-                                {topics && topics.length>0 && topics.map((topic,index) => <Topic key={index}>{topic}</Topic>)}
+                                {topics && topics.length > 0 && topics.map((topic, index) => <Topic key={index}>{topic}</Topic>)}
                             </TopicsList>
-                            {saved ? <button ><i className="bi bi-bookmark-fill"></i></button> : <div onClick={()=>bookMarkPost(id)}><i className="bi bi-bookmark-plus"></i></div>}
+                            {saved ? <button ><i className="bi bi-bookmark-fill"></i></button> : <div onClick={() => bookMarkPost(id)}><i className="bi bi-bookmark-plus"></i></div>}
                         </PostFooter>
                     </PostDetails>
                     <PostImage src={image} />

@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const url = "http://localhost:8080/posts"
+const url = "http://localhost:8080/api/v1/posts"
 
 export const fetchPosts = () => {
     return new Promise((resolve, reject) => {
