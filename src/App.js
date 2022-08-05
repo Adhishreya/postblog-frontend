@@ -1,18 +1,10 @@
 import './App.css';
 import { Routes, Route, Link, Navigate, useSearchParams, useRoutes,useNavigate,useLocation } from 'react-router-dom';
-import { Authenticate, Home, Login, Register, SideNavigator } from './components';
+import { Authenticate, Home, Login, Register, SideNavigator,Post,SavedPost,Stories,WritePost,UserPosts,UserSideNavigator,MyProfielNavigator,UserProfile } from './components';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import styled from 'styled-components';
-import Post from './components/Post';
-import SavedPost from './components/SavedPost';
-import Stories from './components/Stories';
 import { useState } from 'react';
-import WritePost from './components/WritePost';
-import UserPosts from './components/UserPosts';
-import UserSideNavigator from './components/UserSideNavigator';
-import MyProfielNavigator from './components/MyProfielNavigator';
-import UserProfile from './components/UserProfile';
 
 import { useSelector } from 'react-redux';
 
@@ -78,9 +70,6 @@ const App = () => {
           <Link to="/me/stories/drafts" className='displa-6 text-center fs-4 fw-bold'><i className="bi bi-file-text" style={{ color: "black" }}></i></Link>
           <hr />
           <Link to="/p/97ac9feca675/edit" className='displa-6 text-center fs-4 fw-bold'><i className="bi bi-pencil-square" style={{ color: "black" }}></i></Link>
-
-          <Link to="/authenticate/login" className='display-12 text-center fs-4 fw-bold'>Login</Link>
-
           <hr />
           <Link to={`/me/@:username`}><Image type="button" data-bs-toggle="popover" data-bs-title="Popover title" data-bs-content="And here's some amazing content. It's very engaging. Right?" /></Link>
         </SideBar>
@@ -111,13 +100,7 @@ const App = () => {
             <Route path= "/me/@:username" element={<UserProfile/>}/>
           </Routes>
         </div>
-
-        {/* <Routes>
-          <Route path="*" element={<p>Nothing here</p>}>
-            
-            </Route>
-        </Routes> */}
-        
+          {/* <Route path="*" element={<p>Nothing here</p>}> */}       
       </Wrapper>
     </Container>
   );
@@ -129,7 +112,6 @@ const RequiredAuth = ({children}) =>{
   const navigate = useNavigate();
   const location = useLocation();
   if(user=== null){
-    // navigate("/authenticate/login");
   return  <Navigate to="/authenticate/login" state={{from : location }} replace/>
   }
   return children;
