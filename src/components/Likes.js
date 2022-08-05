@@ -61,6 +61,7 @@ const Likes = ({ setLikesVisible, header }) => {
     const [count, setCount] = useState(0);
 
     const {post} = useSelector(state => state.post);
+    const {user} = useSelector(state => state.user);
 
     useEffect(() => {
         if(post)

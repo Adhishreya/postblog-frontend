@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet,useNavigate,useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { loginService, registerService } from '../services/userService';
-import { useDispatch } from 'react-redux'
+import { useDispatch,useSelector } from 'react-redux'
 import { loadingStart, loginSuccess, loginFailure } from '../redux/userSlice';
 
 const Form = styled.form`
@@ -62,7 +62,9 @@ export const Register = () => {
 
     const [username, setUsername] = useState();
     const [email, setEmail] = useState();
-    const [password, setPassword] = useState()
+    const [password, setPassword] = useState();
+
+    const {user} = useSelector(state => state.user);
 
     const login = (e) => {
         e.preventDefault();
@@ -120,6 +122,12 @@ export const Login = () => {
     const [password, setPassword] = useState();
 
     const dispatcher = useDispatch();
+    const {user} = useSelector(state => state.user);
+    
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const from = location.state?.from?.pathname || "/";
 
     const handleSignin = async (e) => {
         e.preventDefault();
@@ -129,6 +137,9 @@ export const Login = () => {
             dispatcher(loginFailure());
         } else {
             dispatcher(loginSuccess(status));
+            if(user){
+                navigate(from,{replace:true})
+            }
         }
     }
     return (
@@ -157,13 +168,8 @@ export const Login = () => {
                                 }
                             }}></i>
                 </InputFlex>
-
                 {/* <p each="error:${#fields.errors('password')}" text="${error}"></p> */}
-
-
-
                 <button type="submit" className="btn btn-success mt-3">Login</button>
-
             </Form>
             <p>
                 New user? <Link to="/authenticate/register" className="btn btn-primary text-light">Register</Link>
