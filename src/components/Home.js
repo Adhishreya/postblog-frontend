@@ -5,6 +5,8 @@ import { fetchPosts } from '../services/postService';
 import { Link } from 'react-router-dom';
 import { addBookmark } from '../services/bookMarkService';
 import { formatDate } from '../utility/formatDate';
+import { useDispatch,useSelector } from 'react-redux'
+import {selected} from '../redux/postSlice';
 
 const Avatar = styled.img`
 cursor: pointer;
@@ -69,7 +71,12 @@ cursor: pointer;
 
 const Home = () => {
     const [posts, setPosts] = useState([]);
+
+    const dispatcher = useDispatch();
+
     useEffect(() => {
+        dispatcher(selected(null));
+
         const fetchProducts = () => {
             fetchPosts().then(res => setPosts(res));
         }
@@ -86,7 +93,7 @@ const Home = () => {
                 {posts && posts !== null && posts.length > 0 ?
                     posts.map((post, index) =>
                         <Link key={post.id} to={`/post/${post.postHeader}@${post.id}`} style={{ textDecoration: "none", color: "black" }}>
-                            <ListCard id={post.id} onClick={() => { }} src={post.user.image} alt="" topics={post.topics} username={post.user.username} postedAt={post.postedAtAt} header={post.postHeader} body={post.postBody} />
+                            <ListCard id={post.id} onClick={() => { }} src={post.user.image} alt="" topics={post.topics} username={post.user.username} userId = {post.user.id} postedAt={post.postedAtAt} header={post.postHeader} body={post.postBody} />
                         </Link>
                     )
                     :
@@ -106,6 +113,7 @@ export const ListCard = ({ src,
     header,
     topics,
     body,
+    userId,
     id,
     saved }) => {
 
@@ -145,7 +153,7 @@ export const ListCard = ({ src,
             <div className=" w-full ">
                 <Header>
                     <Avatar src={src} alt={alt} />
-                    <Link style={{ color: "black", textDecoration: "none" }} to={`/@${username}/home`}><small>{username}</small></Link>
+                    <Link style={{ color: "black", textDecoration: "none" }} to={`/@${username}-${userId}/profile`}><small>{username}</small></Link>
                     <small >{formatDate(postedAt)}</small>
                 </Header>
                 <PostBody>

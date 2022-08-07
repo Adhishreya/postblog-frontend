@@ -42,3 +42,12 @@ export const savePost = (title,data,topics) => {
         }).catch(e=>console.log(e))
     });
 }
+
+
+export const fetchPostsByUser = (id) =>{
+    return new Promise((resolve,reject)=>{
+        axios.get(`${url}/all/${id}`).then(res=>{
+            resolve(res.data);
+        })
+    })
+}

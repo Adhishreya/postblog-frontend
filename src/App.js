@@ -58,6 +58,8 @@ const App = () => {
 
   const [searchParams,setSearchParams] = useSearchParams();
 
+  const {user} = useSelector(state => state.user);
+
   return (
     <Container className="App" overflow={overflow}>
       <Wrapper className="d-flex m-2">
@@ -70,8 +72,8 @@ const App = () => {
           <Link to="/me/stories/drafts" className='displa-6 text-center fs-4 fw-bold'><i className="bi bi-file-text" style={{ color: "black" }}></i></Link>
           <hr />
           <Link to="/p/97ac9feca675/edit" className='displa-6 text-center fs-4 fw-bold'><i className="bi bi-pencil-square" style={{ color: "black" }}></i></Link>
-          <hr />
-          <Link to={`/me/@:username`}><Image type="button" data-bs-toggle="popover" data-bs-title="Popover title" data-bs-content="And here's some amazing content. It's very engaging. Right?" /></Link>
+          
+          {user && <><hr /><Link to={`/me/@:username`}><Image src={user.image} type="button" data-bs-toggle="popover" data-bs-title="Popover title" data-bs-content="And here's some amazing content. It's very engaging. Right?" /></Link></>}
         </SideBar>
         <div className="container fluid bg-warning.bg-gradient">
           <Routes>

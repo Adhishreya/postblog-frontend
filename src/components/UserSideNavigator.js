@@ -127,6 +127,36 @@ gap:2rem;
 margin: 1rem 0rem;
 `;
 
+const Container = styled.div`
+position: absolute;
+background: rgb(241, 245, 249,0.9);
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
+z-index: 1;
+overflow-y: scroll;
+`;
+
+const Close = styled.div`
+margin-left:auto ;
+margin-left: auto;
+`;
+
+const List = styled.div`
+display: flex;
+gap:1rem;
+margin: 1rem 0rem;
+align-items: center;
+`;
+
+
+const FollowWrapper = styled.div`
+width: 50%;
+margin: 4rem auto;
+display: flex;
+flex-direction: column;
+`;
 
 const UserSideNavigator = () => {
     const [followers, setFollowers] = useState([]);
@@ -134,7 +164,9 @@ const UserSideNavigator = () => {
 
     const [username, setUsername] = useState();
     const [src, setSrc] = useState();
-    const [bio, setBio] = useState()
+    const [bio, setBio] = useState();
+
+    const [viewFollowers,setViewFollowers] = useState(false);
 
     const { post } = useSelector(state => state.post);
     const { user } = useSelector(state => state.user);
@@ -144,12 +176,9 @@ const UserSideNavigator = () => {
             setUsername(post.user.username);
             setSrc(post.user.image);
             setBio(post.user.bio);
+            getFollowers(post.user.id).then(res => setFollowers(res));
+            getFollowing(post.user.id).then(res => setFollowing(res));
         }
-        if (post && user) {
-            getFollowers(post.user.id, user.accessToken).then(res => setFollowers(res));
-            getFollowing(post.user.id, user.accessToken).then(res => setFollowing(res));
-        }
-
     }, []);
 
     const followUser = () => {
@@ -168,7 +197,7 @@ const UserSideNavigator = () => {
                 <UserName>{username}</UserName>
             </FlexInfo>
             <UserBios>
-                <UserHeader>{followers && followers.length} Followers</UserHeader>
+                <UserHeader onClick={()=>setViewFollowers(true)}>{followers && followers.length} Followers</UserHeader>
                 <UserInfo>{bio}</UserInfo>
             </UserBios>
             <Card>
@@ -178,21 +207,45 @@ const UserSideNavigator = () => {
             <Header4>
                 Following
             </Header4>
-            <TopicList>
+            {/* <TopicList>
                 {followers.map((follow, id) => <FollowComponent key={id} username={follow} />)}
-            </TopicList>
+            </TopicList> */}
+            {
+                viewFollowers && <FollowComponent followers={followers} setViewFollowers = {setViewFollowers}/>
+            }
 
         </Wrapper>
     )
 }
 
-const FollowComponent = ({ username }) => {
+const FollowComponent = ({ followers,setViewFollowers }) => {
     return (
-        <FollowCard>
-            <Image />
-            <User>{username}</User>
-        </FollowCard>
+        // <FollowCard>
+        //     <Image />
+        //     <User>{username}</User>
+        // </FollowCard>
+        <Container>
+            <FollowWrapper>
+                <Close onClick={() => setViewFollowers(false)}
+                    className='displa-6 text-center fs-1 fw-bold'><i class="bi bi-x"></i></Close>
+                {
+                    followers && followers.map(follower => <FollowUser key={follower.id} username={follower.username} id={follower.id} image={follower.image} />)
+
+                }
+            </FollowWrapper>
+        </Container>
     )
 }
+
+const FollowUser = ({ username, id, image }) => {
+    return (
+        <List>
+            <Avatar src={image} />
+            <h6>{username}</h6>
+            <Button style={{ backgroundColor: "green", width: "8rem" }}>Follow</Button>
+        </List>
+    )
+}
+
 
 export default UserSideNavigator;

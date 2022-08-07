@@ -23,6 +23,7 @@ export const userSlice = createSlice({
         loginFailure: (state) => {
             state.error = true;
             state.loading = false;
+            state.user = null;
         },
         logout: (state) => {
             state.user = null;
