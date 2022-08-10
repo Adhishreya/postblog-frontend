@@ -3,6 +3,9 @@ import styled from 'styled-components';
 import { fetchMostLikedPosts, fetchMostRecentPosts } from '../services/postService';
 import { Link } from 'react-router-dom';
 
+import {searchPost} from '../services/postService';
+import {searchUser} from '../services/userService';
+
 const Wrapper = styled.div`
 height: fit-content;
 position:sticky;
@@ -123,7 +126,12 @@ const SideNavigator = () => {
   const [topics, setTopics] = useState(['Transportation', 'Media', 'Book Experts', 'Blockchain Technology'])
 
   const [popularPosts, setPopularPosts] = useState([]);
+  const [query,setQuery] = useState('');
   const [recentPosts, setRecentPosts] = useState([]);
+
+
+  const [users,setUsers] = useState([]);
+  const [posts,setPosts] = useState([]);
 
   useEffect(() => {
     // fetchMostLikedPosts().then(res => setPopularPosts(res));
@@ -132,14 +140,32 @@ const SideNavigator = () => {
 
   useEffect(() => {
     // topics.map(topic => console.log(topic))
-  })
+
+    const fetchDetails = async () =>{
+      let postsDetails = await searchPost(query);
+      let userDetails = await searchUser(query);
+      setPosts(postsDetails);
+      setUsers(userDetails);
+      console.log(posts);
+      console.log(users);
+    }
+    if(query.length>0){
+      fetchDetails();
+    }
+
+  },[query])
 
   return (
     <Wrapper className='d-flex flex-column me-3'>
       <Button >Get Unlimited Access</Button>
       <InputComponent>
         <i className="bi bi-search"></i>
-        <Input placeholder='Search user/article' />
+        <Input placeholder='Search user/article' onKeyDown={e=>{
+          if(e.key === "Enter"){
+            setQuery(e.target.value);
+            console.log(e.target.value)
+          }
+        }} onChange={e=>{}}/>
       </InputComponent>
 
       {/* <div className='popular posts fw-bolder text-start fs-4'>Popular - Posts</div> */}
